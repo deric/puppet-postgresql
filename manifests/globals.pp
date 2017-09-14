@@ -123,7 +123,13 @@ class postgresql::globals (
     },
     default => undef,
   }
-  $globals_version = pick($version, $default_version, 'unknown')
+  $globals_hiera = lookup('postgresql::globals', Hash, {'strategy' => 'deep'}, {})
+  $hiera_version = has_key($globals_hiera, 'version') ? {
+    true => $globals_hiera['version'],
+    false => undef,
+  }
+
+  $globals_version = pick($hiera_version, $version, $default_version, 'unknown')
   if($globals_version == 'unknown') {
     fail('No preferred version defined or automatically detected.')
   }
@@ -147,8 +153,13 @@ class postgresql::globals (
     default => $postgis_version,
   }
 
+  $hiera_manage_package_repo = has_key($globals_hiera, 'manage_package_repo') ? {
+    true => $globals_hiera['manage_package_repo'],
+    false => false,
+  }
+
   # Setup of the repo only makes sense globally, so we are doing this here.
-  if($manage_package_repo) {
+  if($manage_package_repo or $hiera_manage_package_repo) {
     class { 'postgresql::repo':
       version => $globals_version,
       proxy   => $repo_proxy,
