@@ -22,7 +22,7 @@ Puppet::Functions.create_function(:'postgresql::postgresql_password') do
   #   The postgresql password hash from the clear text username / password.
   dispatch :default_impl do
     required_param 'Variant[String[1], Integer]', :username
-    required_param 'Variant[String[1], Sensitive[String[1]], Integer]', :password
+    required_param 'Variant[String[1], Sensitive[String[1]], Integer, Deferred]', :password
     optional_param 'Boolean', :sensitive
     # The following Enum is also defined in `types/pg_password_encryption.pp` but type alias can't be used in Deferred functions.
     optional_param 'Optional[Enum["md5", "scram-sha-256"]]', :hash
