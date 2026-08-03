@@ -29,7 +29,9 @@ Puppet::Type.type(:postgresql_conf).provide(:ruby) do
                 else
                   matches[:value].delete("'")
                 end
-        attributes_hash = { line_number:, key: matches[:key], ensure: 'present', value:, comment: matches[:comment] }
+        # rubocop:disable Style/HashSyntax -- hash shorthand requires Ruby >= 3.1, unsupported by older Puppet agents
+        attributes_hash = { line_number: line_number, key: matches[:key], ensure: 'present', value: value, comment: matches[:comment] }
+        # rubocop:enable Style/HashSyntax
         active_settings.push(attributes_hash)
       end
     end

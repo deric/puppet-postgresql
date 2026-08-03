@@ -64,13 +64,15 @@ Puppet::Functions.create_function(:'postgresql::postgresql_password') do
   end
 
   def digest_key(password, salt)
+    # rubocop:disable Style/HashSyntax -- hash shorthand requires Ruby >= 3.1, unsupported by older Puppet agents
     OpenSSL::KDF.pbkdf2_hmac(
       password,
-      salt:,
+      salt: salt,
       iterations: 4096,
       length: 32,
       hash: OpenSSL::Digest.new('SHA256'),
     )
+    # rubocop:enable Style/HashSyntax
   end
 
   def client_key(digest_key)
